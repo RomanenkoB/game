@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хоккей</title>
+    <style>
+        #canvas{
+            background: #eee ;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <script src="jquery-3.4.1.min.js"></script>
+</head>
+<body>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+
+
+    <script>
+        document.addEventListener("keydown",keyDownHandler, false);
+        document.addEventListener("keyup",keyupHandler, false);
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d")
+
+        var Ballradius = 20;
+        var widthplatform = 300;
+        var heightplatform = 50;
+        var BallX = canvas.width/2;
+        var BallY = canvas.height/2;
+        var PaddleHeight = 30;
+        var PaddleWidth = 200;
+        var PaddleX = (canvas.width - PaddleWidth)/2;
+        var PaddleX2 = (canvas.width - PaddleWidth)/2
+        var speedBall = 4;
+        var DX = speedBall;
+        var DY = -speedBall;
+        var rightPressed = false;
+        var leftPressed = false;
+        var Apressed = false;
+        var Dpressed = false;
+        var coinup = 0;
+        var coindown = 0;
+
+
+        // ctx.strokeRect(0,0,canvas.width, canvas.height)
+        // ctx.stroke()
+
+        function drawBall(){
+            ctx.beginPath();
+            ctx.arc(BallX,BallY,Ballradius,0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD"
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle(){
+            ctx.beginPath();
+            ctx.rect(PaddleX, canvas.height-PaddleHeight, PaddleWidth, PaddleHeight);
+            ctx.fillStyle = "black";
+            ctx.fill();
+            ctx.closePath();
+        }
+        function drawPaddle2(){
+            ctx.beginPath();
+            ctx.rect(PaddleX2, 0, PaddleWidth, PaddleHeight);
+            ctx.fillStyle = "green";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+
+        function otskok(){
+            if(BallY + DY < Ballradius){   //Вверх
+                DY = - DY;
+                coindown++;
+                DY = speedBall;
+                DX = - speedBall;
+                BallX = canvas.width/2;
+                BallY = canvas.height/2;
+
+            }
+            else if(BallY + DY > canvas.height - Ballradius){   //Низ
+                DY = - DY;        
+                coinup++;
+                DY = speedBall;
+                DX = - speedBall;
+                BallX = canvas.width/2;
+                BallY = canvas.height/2;}
+            
+
+            else if(BallY + DY < Ballradius + PaddleHeight  //верхняя платформа
+                    && BallX > PaddleX2 && BallX < PaddleX2 + PaddleWidth){
+                    DY = - DY;
+                    DY++
+                 }
+            else if(BallY+DY > canvas.height-Ballradius - PaddleHeight   //нижняя платформа
+                    && BallX > PaddleX && BallX < PaddleX + PaddleWidth){
+                    DY = - DY;
+                    DY--
+            }
+                
+
+            else if(BallX + DX > canvas.width - Ballradius){  // Право
+                DX = - DX;
+            }  
+            else if(BallX + DX < Ballradius){   //Лево
+                DX = - DX;          
+        }
+    }
+
+        function moveBall(){
+            BallX += DX;
+            BallY += DY;
+        }
+
+        function movePaddle(){
+            if(rightPressed && PaddleX < canvas.width-PaddleWidth){
+                PaddleX += 7
+            }
+            else if(leftPressed && PaddleX > 0){
+                PaddleX -= 7
+            }
+        }
+
+        function movePaddle2(){
+            if(Dpressed && PaddleX2 < canvas.width-PaddleWidth){
+                PaddleX2 += 7
+            }
+            else if(Apressed && PaddleX2 > 0){
+                PaddleX2 -= 7
+            }
+        }
+
+       
+
+        function keyDownHandler(enent){
+            if(enent.keyCode == 39){
+                rightPressed = true;
+            }
+            else if(enent.keyCode == 37){
+                leftPressed = true;
+            }
+            else if(enent.keyCode == 65){
+                Apressed = true;
+            }
+            else if(enent.keyCode == 68){
+                Dpressed = true;
+            }
+        }
+
+        function keyupHandler(enent){
+            // console.log(enent.keyCode) // Проверка на номер клавиши
+            if(enent.keyCode == 39){
+                rightPressed = false;
+            }
+            else if(enent.keyCode == 37){
+                leftPressed = false;
+            }
+            else if(enent.keyCode == 65){
+                Apressed = false;
+            }
+            else if(enent.keyCode == 68){
+                Dpressed = false;
+            }
+
+        }
+
+        function draw(){
+            ctx.clearRect(0,0, canvas.width,canvas.height);
+            drawBall();
+            drawPaddle()
+            drawPaddle2()
+            
+            otskok();
+            moveBall();
+            movePaddle2()
+            
+            movePaddle();
+
+        }
+
+       
+        setInterval(draw, 20);
+        
+      
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // var platform = function(x,y){
+        //     this.xp = x;
+        //     this.xy = y;
+        //     this.speed = 5;
+        //         }
+        // var Ball = function(xx,yy){
+        //     this.xb = xx;
+        //     this.yb = yy;
+        // }
+
+        // Ball.prototype.restart = function(){
+        //     this.x = canvas.width / 2;
+        //     this.y = canvas.height / 2;
+        // }
+
+        // var keycod = {
+        //     68: "right2",
+        //     65: "left2",
+        //     37: "left1",
+        //     39: "right1"
+        // }
+
+        // var keystate = {}
+
+        // var gameloop = function(){
+        //     if (keystate[37] == true){
+        //         platform1.moveleft()
+        //     }
+        //     if (keystate[65] == true){
+        //         platform2.moveleft()
+        //     }
+        //     if (keystate[68] == true){
+        //         platform1.moveright()
+        //     }
+        //     if (keystate[68] == true){
+        //         platform2.moveright()
+        //     }            
+        // }
+
+        // $("body").keydown(
+        //     function(event){
+        //         keystate[event.keyCode] = true;
+        //     }
+        // )
+
+        // $("body").keyup(
+        //     function(event){
+        //         keystate[event.keyCode] = false;
+        //     }
+        // )
+
+        // platform.prototype.moveleft = function(){
+        //     this.xp -= this.speed; //в прототипах можно использовать this
+        // }
+
+        // platform.prototype.moveright = function(){
+        //     this.xp += this.speed; //в прототипах можно использовать this
+        // }
+
+        // platform.prototype.draw = function(){
+        //     ctx.beginPath();
+        //     ctx.fillRect(this.xp, this.xy, widthplatform,heightplatform);
+        //     ctx.stroke();
+
+
+        // }
+
+
+
+
+    </script>
+</body>
+</html>

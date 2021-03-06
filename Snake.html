@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Змейка</title>
+    <style>
+        #canvas {
+
+            background: #eee ;
+            display: block;
+            margin: 0 auto;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="400"></canvas>
+
+
+    <script>
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d")
+        document.addEventListener("keydown", onKeyDown);
+        var block = 20;
+
+
+        var snake = {
+            x: canvas.width / 2,
+            y: canvas.height /2,
+            dx: block,
+            dy: 0,
+            leght: 3,
+            trail: []
+
+        }
+
+        var apple = {
+            x: 40,
+            y: 40,
+        }
+
+        function getrandompos(min, max){
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+
+        function drawapple(){
+            ctx.beginPath();
+            ctx.fillStyle = "red";
+            ctx.fillRect(apple.x, apple.y, block-2,block-2)
+            ctx.closePath();
+        }
+
+        function drawsnake(){
+            ctx.beginPath();
+            ctx.fillStyle = "darkgreen"
+            for (let i = 0; i < snake.leght; i++) {
+                ctx.fillRect(snake.trail[i].x, snake.trail[i].y, block-1,block-1)
+                
+            }
+            ctx.closePath();
+            
+
+
+        }
+        function movesnake(){
+            snake.x += snake.dx;  
+            snake.y += snake.dy;  
+            snake.trail.unshift({x: snake.x, y: snake.y})
+            console.log(snake.trail[0].x, snake.trail[0].y)
+            while(snake.trail.length > snake.leght){
+                snake.trail.pop()
+            
+            if (snake.x>canvas.width-block){
+                snake.x = 0-block
+            }        
+            else if(snake.y>canvas.height-block){
+                snake.y = 0-block    
+        }
+            if (snake.x<0){
+                snake.x = canvas.width-block
+            }        
+            else if(snake.y<0){
+                snake.y = canvas.height-block    
+        }
+        }
+        }
+
+        function checkeat(){
+            if(snake.x == apple.x && snake.y == apple.y){
+                snake.leght += 1;
+                apple.x = getrandompos(0,40) * block;
+                apple.y = getrandompos(0,20) * block;
+            }
+        }
+        function onKeyDown(event){
+                if(event.keyCode == 37){
+                    snake.dx = -block;
+                    snake.dy = 0;
+                }
+                else if(event.keyCode == 38){
+                    snake.dy = -block;
+                    snake.dx = 0;
+                }
+                if(event.keyCode == 39){
+                    snake.dx = block;
+                    snake.dy = 0;
+                }
+                else if(event.keyCode == 40){
+                    snake.dy = block;
+                    snake.dx = 0;
+                }
+        }
+
+
+
+
+        function startgame(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            movesnake()
+            checkeat()
+            drawsnake()
+            drawapple()
+            
+            
+        }
+
+        setInterval(startgame,250)
+
+
+
+
+    </script>
+</body>
+
+</html>

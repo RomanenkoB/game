@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #message{
+            /* background: chocolate; */
+            width: 300px;
+            position: absolute;
+            /* display: block; */
+            left: 41%;
+            top: 100px;
+            text-align: center;
+            font-size: 35px;
+        }
+        #game{
+            position: absolute;
+            top: 150px;
+            left: 40%;
+            margin: 0% auto;
+            width: 300px;
+            height: 300px;
+            background: orangered;
+        }
+        #button{
+            position: absolute;
+            top: 470px;
+            left: 40%;
+            border: 1px solid yellow;
+            border-radius: 20px;
+            background-color: yellow;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .cell{
+            width: 100px;
+            height: 100px;
+            float: left;
+            border: 1px solid white;
+            box-sizing: border-box;
+            line-height: 100px;
+            text-align: center;
+            font-size: 80px;
+            cursor: pointer;
+            transition: all linear .3s;
+
+            
+        }
+        .cell:hover{
+            background-color: #ccc;
+        }
+        
+
+    </style>
+
+
+</head>
+<body>
+    <div id="message">Ходит игрок: X</div>
+    <div id="game"></div>
+    <button id="button">Очистить</button>
+
+
+    <script>
+        var hod = 0;
+        var player = "X";
+        var message = document.getElementById("message")
+        var reset = document.getElementById("button")
+        var wincombinations = [
+                [1,2,3],
+                [4,5,6],
+                [7,8,9],
+                [1,4,7],
+                [2,5,8],
+                [3,6,9],
+                [1,5,9],
+                [3,5,7]
+            ]
+
+        var dataX = [];
+        var data0 = [];
+        var ccount = 0
+        var oldplayer;
+
+        for(var i = 0; i < 9; i++){
+            document.getElementById("game").innerHTML+='<div class="cell" id="'+(i+1)+'"></div>'   //Заполняем основной див клеточками из дивов
+        }
+
+        var allcell = document.getElementsByClassName('cell');
+        
+
+        for(let i = 0; i < allcell.length; i++){
+            allcell[i].addEventListener('click', currentstep)  //добавляем прослушиватель для всех дивов
+        }
+        // console.log(allcell)
+
+        function currentstep(){
+            var num = +this.getAttribute("id") 
+            // console.log(num)
+            
+            if(this.textContent == ""){ //можем нажать только на пустую клеточку
+                this.innerText = player;
+                oldplayer = player
+                if (player == "X") {
+                    dataX.push(num)     //пушим номер клеточки на которую нажали в соответствующий массив
+                    player = "0"
+                }
+                else{
+                    data0.push(num)
+                    player = "X"
+                }
+                
+                hod ++;
+                if((dataX.length > 2 || data0.length > 2) && (checkwin(dataX, num) || checkwin(data0, num))){ //делаем проверку выигрыша только после того как в массиве уже есть три хода
+                    for(let i = 0; i < allcell.length; i++){
+                         allcell[i].removeEventListener('click', currentstep) //если есть победа то удаляем прослушиватель, чтоб нельзя было нажимать на клетки
+                    }
+                    return message.innerHTML = "Победил игрок: " + oldplayer
+                }
+
+                oldplayer = player
+                if(hod == 9){
+                message.innerHTML = "Ничья"
+                }
+                else{
+                    message.innerHTML = "Ходит игрок: " + player
+                }
+
+            }
+        }
+
+
+        function checkwin(arr, number){
+
+            for(var i = 0; i < wincombinations.length; i++){ //проходимся по массиву с масивами победных комбинаций
+                var winarr = wincombinations[i]
+                ccount = 0
+                if(winarr.indexOf(number) !== -1){          //если в одном из масиве есть номер клетки по которой мы нажали последний раз
+                    for(var j = 0; j < winarr.length; j++){ //то мы проходимся по этому массиву и сравниваем совпадения со всеми ранее нажатыми клеточками
+                        if(arr.indexOf(winarr[j]) !== -1){
+                            ccount++                        //Считаем количество совпадений
+                            console.log(ccount)
+                            if(ccount == 3){            //Если 3 то значит есть победа
+                                return true
+                            }
+                        }
+                    }
+                    ccount = 0                  //Иначе обнуляем счетчик
+                }
+
+            }
+            
+        }
+
+        reset.addEventListener('click',function(){      // Кнопка очистить
+            for(let i = 0; i < allcell.length; i++){
+                allcell[i].innerText = "";
+            }
+            hod = 0;
+            player = "X";
+            message.innerHTML = "Ходит игрок: " + player;
+            dataX = [];
+            data0 = [];
+            for(let i = 0; i < allcell.length; i++){            //Возвращем прослушиватель обратно
+            allcell[i].addEventListener('click', currentstep)
+        }
+        })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Найти клад</title>
+</head>
+
+<body>
+	<img id="map" src="https://i.pinimg.com/originals/e5/52/17/e55217d0ce0c4e5845a38f466521032e.jpg" width="1500" height="750">
+
+	<script>
+		var kladx = 0; 
+		var	klady = 0;
+		var clickx = 0; 
+		var clicky = 0;
+		var rez;
+		
+
+		var image = document.getElementById("map");
+		image.onclick = function(event) {
+			//    // вывести тип события, элемент и координаты клика
+			//    alert(event.type + " на " + event.currentTarget);
+			alert("Координаты: " + event.clientX + ":" + event.clientY);
+			clickx = event.clientX;
+			clicky = event.clientY;
+			getdistance()
+			checkwin()
+		}
+
+		function klad() {
+			kladx = Math.floor(Math.random() * image.width)
+			klady = Math.floor(Math.random() * image.height)
+			console.log(kladx)
+			console.log(klady)
+		}
+		klad();
+
+		function getdistance() {
+			var diffx = clickx - kladx;
+			var diffy = clicky - klady;
+			rez = Math.sqrt((diffx * diffx) + (diffy * diffy))
+			console.log(Math.round(rez) + " Результат")
+			// return rez;
+		}
+
+		function checkwin(){
+			if(rez>300){   //300 +++
+				console.log("Очень холодно")
+				return;
+			}
+			else if(rez>200){   //200-300
+				console.log("Холодно")
+				return;
+			}
+			else if(rez>100){ 	//100-200
+				console.log("Тепло")
+				return;
+			}
+			else if(rez>50){	//50-100
+				console.log("Горячо")
+				return;
+			}
+			else if(rez<30){
+				console.log("Выиграл")
+				return;
+			}
+
+		}
+
+
+
+		// function startgame(){
+		// 	rez = getdistance(kladx, klady, clickx, clicky)
+		// }
+		
+		
+		// setInterval(startgame, 20)
+
+		//		console.log(distanse)                                                          
+		//		function getrezult(distanse){
+		//			if(distanse<10){
+		//				console.log("обожжешься")
+		//			}
+		//		}
+
+	</script>
+</body>
+
+</html>
